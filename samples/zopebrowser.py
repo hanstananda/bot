@@ -12,3 +12,4 @@ import HelperClass as hc
 
 test=hc.splintergetdata()
 test.start('CZ1003','F')
+print('test')
