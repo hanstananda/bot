@@ -1,7 +1,5 @@
 import datetime
 import pytz
-import os
-import sys
 import time
 import ErrorClass as err
 

@@ -1,8 +1,6 @@
 import os
-import sys
 import json
 from openpyxl import load_workbook, Workbook
-# from openpyxl.utils.dataframe import dataframe_to_rows
 
 
 class DB(object):
