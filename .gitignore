@@ -2,8 +2,7 @@
 __pycache__/
 
 # All txt files
-*.txt
-!requirements.txt
+
 
 # logging file
 geckodriver.log
@@ -14,7 +13,7 @@ geckodriver.log
 .idea/
 
 # All api
-*.json
+
 
 # Database
 *.xlsx
