@@ -365,7 +365,7 @@ class API(object):
                     
                     self.bot.sendMessage(chat_id, 'Please wait while we process your information. This may take around a minute.\n')
                     self.bot.sendMessage(chat_id, 'To prevent crashing, please wait until the Success message has appeared.\n')
-                    try:
+                    """try:
                         self.indexchosen=''
                         BotCommandObject.AddCourseCommand(chat_id)
                         self.parseddataindex = BotCommandObject.parseddataindex
@@ -386,6 +386,10 @@ class API(object):
                     else:
                         if not BotCommandObject.error:
                             self.bot.sendMessage(chat_id, "The indexes for this course code has been successfully accessed. Please do the instructions above :)")
+                    """
+                    self.indexchosen=''
+                    BotCommandObject.AddCourseCommand(chat_id)
+                    self.parseddataindex = BotCommandObject.parseddataindex
 
                 elif len(self.list_update_message) >= 2 and self.list_update_message[-2] == '/addfirstweek':
                     try:
@@ -803,12 +807,15 @@ class BotCommand(API):
         
         if not is_course_code_exist or course_code not in list(course_code_dict.keys()):
             # Splinter in action
-            try:
+            """try:
                 self.getdata.start(course_code, student_type)
                 self.parseddataindex = self.getdata.parsedatahml()
             except:
-                raise err.BrowserError
-
+                raise err.BrowserError"""
+            #try exec debug start
+            self.getdata.start(course_code, student_type)
+            self.parseddataindex = self.getdata.parsedatahml()
+            #try exec debug end
             inlines_keyboard = []
             for i in range(len(self.getdata.indexlist)):
                 inlines_keyboard.append([InlineKeyboardButton(text=self.getdata.indexlist[i], callback_data=self.getdata.indexlist[i])])
