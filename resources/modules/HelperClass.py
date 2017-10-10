@@ -333,7 +333,7 @@ class splintergetdata(object):
         self.soup = ''
 
     def start(self, Course_code, Type_course):
-        with Browser(self.browser_used) as browser:
+        with Browser('phantomjs') as browser:
             browser.visit(self.url)
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
