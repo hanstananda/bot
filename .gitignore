@@ -6,6 +6,7 @@ __pycache__/
 
 # logging file
 geckodriver.log
+ghostdriver.log
 
 # IDE settings
 .vs/
@@ -16,6 +17,3 @@ geckodriver.log
 
 
 # Database
-*.xlsx
-*.xls
-*.csv

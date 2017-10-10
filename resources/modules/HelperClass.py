@@ -3,6 +3,7 @@ import pytz
 import time
 import ErrorClass as err
 
+# from zope.testbrowser.browser import Browser
 from bs4 import BeautifulSoup
 from splinter import Browser
 
@@ -324,7 +325,8 @@ class splintergetdata(object):
         self.url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
         self.browser_file = "../resources/browser.txt"
         f = open(self.browser_file, 'r')
-        self.browser_used = f.read()
+        # self.browser_used = f.read()
+        self.browser_used = 'phantomjs'
         f.close()
         self.data=[[],[],[],[],[],[],[]]
         self.indexlist=[]
