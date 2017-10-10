@@ -16,6 +16,7 @@ exit
 .idea/
 
 # All api
-
+*.xlsx
+*.xls
 
 # Database
