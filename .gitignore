@@ -2,7 +2,7 @@
 __pycache__/
 
 # All txt files
-
+token.txt
 
 # logging file
 geckodriver.log
