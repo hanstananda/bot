@@ -149,7 +149,7 @@ class API(object):
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
                     
-                    if not excel.isRecordExist(chat_id, other_event_id=True):
+                    if not excel.isRecordExist(chat_id, other_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
@@ -169,7 +169,7 @@ class API(object):
                 elif msg_received == '/getevent':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, other_event_id=True)[4]
-                    if not excel.isRecordExist(chat_id, other_event_id=True):
+                    if not excel.isRecordExist(chat_id, other_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id, "There is no event recorded in our database!")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addevent to add an event")
@@ -215,19 +215,19 @@ class API(object):
                 elif msg_received == '/removecourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id,"There is nothing to remove...")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add a course")
                     
                     else:
                         course_code_dict = json.loads(course_code_str)
-                        index_list = [
+                        course_code_list = [
                             key
-                            for key in list(course_code_dict.keys())
+                            for key in sorted(list(course_code_dict.keys()))
                         ]
                         inlines_keyboard = []
-                        for i in index_list:
+                        for i in course_code_list:
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Please click the course that you want to remove!",reply_markup=keyboard)
@@ -235,18 +235,18 @@ class API(object):
                 elif msg_received == '/getcourse':
                     excel = db.DB()
                     course_code_str = excel.table_query(chat_id, course_code_event_id=True)[3]
-                    if not excel.isRecordExist(chat_id, course_code_event_id=True):
+                    if not excel.isRecordExist(chat_id, course_code_event_id=True) or course_code_str is None:
                         self.bot.sendMessage(chat_id, "There are no indexes registered in our database!")
                         self.bot.sendMessage(chat_id, self.suggestion)
                         self.bot.sendMessage(chat_id, "Run /addcourse to add your index")
                     else:
                         course_code_dict = json.loads(course_code_str)
-                        index_list = [
+                        course_code_list = [
                             key
-                            for key in list(course_code_dict.keys())
+                            for key in sorted(list(course_code_dict.keys()))
                         ]
                         inlines_keyboard = []
-                        for i in list(index_list):
+                        for i in list(course_code_list):
                             inlines_keyboard.append([InlineKeyboardButton(text=i, callback_data=i)])
                         keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
                         self.bot.sendMessage(chat_id, "Your course code are as follows: ", reply_markup=keyboard)
@@ -509,8 +509,17 @@ class API(object):
                     db.DB().update(chat_id, course_code_event_id=course_code_dict_str)
                     try:
                         toGoogle.PreCreateEventIndex(event_list, self.indexchosen)
+                    
                     except:
-                        self.bot.sendMessage(chat_id, "Unknown error has occured")
+                        self.bot.sendMessage(chat_id, "You have credential issues")
+                        self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
+                        self.bot.sendMessage(chat_id, self.suggestion)
+                        self.bot.sendMessage(chat_id, "Fix your API issues and put your credential files in the correct location")
+                        self.bot.sendMessage(chat_id, "If necessary, delete your entire API project and create another one by following the instructions in the [Google's official documentation](https://developers.google.com/google-apps/calendar/quickstart/python)", parse_mode="Markdown")
+                        # Delete from database
+                        del(course_code_dict[course_code])
+                        course_code_str = json.dumps(course_code_dict)
+                        db.DB().update(chat_id, course_code_event_id=course_code_str)
                         
                     else:
                         self.bot.sendMessage(chat_id, "Nice!")
@@ -880,33 +889,39 @@ class BotCommand(API):
         num_event = int(self.str_text)
         self.bot.sendMessage(chat_id, 'Getting %s upcoming event(s) for you' %(num_event))
         events = gc.GoogleAPI().getUpcomingEventList(num_event)
-        event_detail_list = []
-        inlines_keyboard = []
-        for event in events:
-            # Getting the start, end, and summary
-            start = event['start']['dateTime']
-            end = event['end']['dateTime']
-            summary = event['summary']
+        event_detail = ''
+        if not events:
+            self.bot.sendMessage(chat_id, 'No upcoming events found!')
+            self.bot.sendMessage(chat_id, self.suggestion)
+            self.bot.sendMessage(chat_id, 'Run /addevent to add an event')
+        else:
+            if num_event > len(events):
+                self.bot.sendMessage(chat_id, 'There are only %d event(s) ahead!' %(len(events)))
+            self.bot.sendMessage(chat_id, "Here they are!")
+            for event in events:
+                # Getting the start, end, and summary
+                start = event['start']['dateTime']
+                end = event['end']['dateTime']
+                summary = event['summary']
 
-            # Ignoring their timezones
-            ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
-            ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
+                # Ignoring their timezones
+                ignore_tz_start = hc.StringParseGoogleAPI(start).IgnoreTimeZone()
+                ignore_tz_end = hc.StringParseGoogleAPI(end).IgnoreTimeZone()
 
-            # Making these pretty
-            ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
-            ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
+                # Making these pretty
+                ignore_tz_start_pretty = ignore_tz_start.strftime('%Y-%m-%d %H:%M')
+                ignore_tz_end_pretty = ignore_tz_end.strftime('%Y-%m-%d %H:%M')
 
-            # Combining all
-            complete_event = summary + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ')'
-            event_detail_list.append(complete_event)
-        
-        # Preparing inline keyboard
-        for event_detail in event_detail_list:
-            inlines_keyboard.append([InlineKeyboardButton(text=event_detail, callback_data=event_detail)])
-        keyboard = InlineKeyboardMarkup(inline_keyboard=inlines_keyboard)
-        
-        # Send the message to user
-        self.bot.sendMessage(chat_id, 'Here they are!', reply_markup=keyboard)
+                # Combining all
+                complete_event = "*" + summary + "*" + ' (' + ignore_tz_start_pretty + ' until ' + ignore_tz_end_pretty + ') \n'
+                event_detail += complete_event
+            
+            try:
+                self.bot.sendMessage(chat_id, event_detail, parse_mode="Markdown")
+            except:
+                self.bot.sendMessage(chat_id, 'Too many events! Enter a smaller integer please!')
+                self.bot.sendMessage(chat_id, self.suggestion)
+                self.bot.sendMessage(chat_id, "Run /getupcomingevent again and enter a smaller integer, typically less than 70!")
         
 
 class IndexToGoogle(API):
