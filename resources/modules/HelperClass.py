@@ -338,7 +338,7 @@ class splintergetdata(object):
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
             browser.find_by_value("Search").first.click()
-            time.sleep(5)  # to make sure the website has been fully loaded...
+            time.sleep(3)  # to make sure the website has been fully loaded...
             for ii in browser.windows:
                 if ii.url == "https://wish.wis.ntu.edu.sg/webexe/owa/AUS_SCHEDULE.main_display1":
                     browser.windows.current = ii
