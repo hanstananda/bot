@@ -3,6 +3,7 @@ __pycache__/
 
 # All txt files
 token.txt
+personal.txt
 
 # logging file
 geckodriver.log
