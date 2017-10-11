@@ -325,15 +325,15 @@ class splintergetdata(object):
         self.url = "https://wish.wis.ntu.edu.sg/webexe/owa/aus_schedule.main"
         self.browser_file = "../resources/browser.txt"
         f = open(self.browser_file, 'r')
-        # self.browser_used = f.read()
-        self.browser_used = 'phantomjs'
+        self.browser_used = f.read()
+        # self.browser_used = 'phantomjs'
         f.close()
         self.data=[[],[],[],[],[],[],[]]
         self.indexlist=[]
         self.soup = ''
 
     def start(self, Course_code, Type_course):
-        with Browser('phantomjs') as browser:
+        with Browser(self.browser_used) as browser:
             browser.visit(self.url)
             browser.fill("r_subj_code", Course_code)
             browser.choose("r_search_type", Type_course)
