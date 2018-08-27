@@ -16,6 +16,11 @@ try:
 except ImportError:
     flags = None
 
+import sys
+
+cwd = os.path.dirname(sys.argv[0])
+os.chdir(cwd)
+
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/calendar-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/calendar'

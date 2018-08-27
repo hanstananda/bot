@@ -237,7 +237,7 @@ class StringParseGoogleAPI(object):
         end = 13
         date_list = []
         if query_recur != '':
-            query_recur = query_recur.replace('Wk', '')
+            query_recur = query_recur.replace('Teaching Wk', '')
             if query_recur.count('-') == 0:
                 # Separate the delimiter
                 self.occuring_week = query_recur.split(',')
