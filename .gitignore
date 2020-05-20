@@ -3,6 +3,7 @@ __pycache__/
 
 # All txt files
 *.txt
+!requirements.txt
 
 # logging file
 geckodriver.log
