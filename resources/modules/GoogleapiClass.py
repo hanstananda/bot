@@ -1,5 +1,4 @@
 from __future__ import print_function
-from oauth2client import tools
 
 import datetime
 import pickle
@@ -14,13 +13,6 @@ import datetime
 import pytz
 import HelperClass as hc
 import DBClass as db
-
-try:
-    import argparse
-    flags = argparse.ArgumentParser(parents=[tools.argparser]).parse_args()
-
-except ImportError:
-    flags = None
 
 
 class GoogleAPI(object):
