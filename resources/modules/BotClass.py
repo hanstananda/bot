@@ -1,4 +1,6 @@
 import json
+import traceback
+
 import telepot
 import datetime
 from telepot.namedtuple import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton, ReplyKeyboardRemove
@@ -468,7 +470,7 @@ class API(object):
             complete_data = BotFindIndexObject.selectindex(self.indexchosen, self.parseddataindex)
             course_code_dict = {
                 course_code: {
-                    'index':self.indexchosen,
+                    'index': self.indexchosen,
                     'event_id': []
                 }
             }
@@ -506,7 +508,8 @@ class API(object):
                     try:
                         toGoogle.PreCreateEventIndex(event_list, self.indexchosen)
                     
-                    except:
+                    except Exception as e:
+                        traceback.print_exc()
                         self.bot.sendMessage(chat_id, "You have credential issues")
                         self.bot.sendMessage(chat_id, self.failRecordDatabaseandCalendar)
                         self.bot.sendMessage(chat_id, self.suggestion)

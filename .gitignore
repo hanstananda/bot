@@ -22,3 +22,5 @@ geckodriver.log
 
 # Sample directory
 samples/
+
+*.pickle
